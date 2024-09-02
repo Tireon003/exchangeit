@@ -1,5 +1,6 @@
-from .common import Base
+from .common import Base, UserTable
 
 __all__ = (
-    "Base"
+    "Base",
+    "UserTable",
 )
