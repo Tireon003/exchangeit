@@ -1,5 +1,5 @@
-from .database import Database
+from .database import database
 
 __all__ = (
-    "Database",
+    "database",
 )

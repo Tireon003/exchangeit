@@ -1,4 +1,4 @@
-from src.back.config import settings
+from config import settings
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from contextlib import asynccontextmanager
 
@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 class Database:
 
     def __init__(self):
-        self.aengine = create_async_engine(url=settings.db_url)
+        self.aengine = create_async_engine(url=settings.db_url, echo=True)
         self.asession = async_sessionmaker(self.aengine, expire_on_commit=False)
 
     @asynccontextmanager
@@ -15,6 +15,10 @@ class Database:
             async with self.asession() as session:
                 yield session
         except Exception as e:
+            print(e)
             await session.rollback()
         finally:
             await session.close()
+
+
+database = Database()
