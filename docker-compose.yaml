@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5430:5432"
+    restart: always
+    env_file: .env
+    volumes:
+      - ./postgres_db:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/back/Dockerfile.backend
+    ports:
+      - ${API_EXT_PORT}:8000
+    depends_on:
+      - db
+    restart: always
+    env_file: .env
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/front/Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    restart: always
+    depends_on:
+      - backend
+
+volumes:
+  postgres_db:
