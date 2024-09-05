@@ -2,6 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 from sqlalchemy import ForeignKey, String, text
 from datetime import datetime as dt
 from typing import Annotated
+from pydantic import PositiveInt
 
 
 class ReusableTypes:
@@ -39,18 +40,17 @@ class UserTable(Base):
         back_populates="belongs_to",
     )
 
-    # user_chats: Mapped[list["AdTable"]] = relationship(
-    #     back_populates="chats_with",
-    #     secondary="messages"
-    # )
+    contacts: Mapped["ContactTable"] = relationship(
+        back_populates="user",
+    )
 
 
 class AdTable(Base):
     __tablename__ = "ads"
 
     id: Mapped[ReusableTypes.intpk]
-    by_user: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    category: Mapped[int] = mapped_column(ForeignKey("categories.id"))
+    by_user: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    category: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="SET NULL"))
     item_give: Mapped[ReusableTypes.str40]
     item_get: Mapped[ReusableTypes.str40]
     description: Mapped[ReusableTypes.str300]
@@ -69,11 +69,6 @@ class AdTable(Base):
     ad_category: Mapped["CategoryTable"] = relationship(
         back_populates="ads_of_each",
     )
-
-    # chats_with: Mapped[list["UserTable"]] = relationship(
-    #     back_populates="user_chats",
-    #     secondary="messages"
-    # )
 
 
 class CategoryTable(Base):
@@ -100,18 +95,15 @@ class FavoriteTable(Base):
     )
 
 
-# class MessageTable(Base):
-#     __tablename__ = "messages"
-#
-#     id: Mapped[int] = mapped_column(unique=True)
-#     ad_id: Mapped[int] = mapped_column(ForeignKey('ads.id'))
-#     from_user: Mapped[int] = mapped_column(
-#         ForeignKey('users.id', ondelete="CASCADE"),
-#         primary_key=True
-#     )
-#     to_user: Mapped[int] = mapped_column(
-#         ForeignKey('users.id', ondelete="CASCADE"),
-#         primary_key=True
-#     )
-#     message: Mapped[ReusableTypes.str300]
-#     msg_timestamp: Mapped[ReusableTypes.dt_default_now]
+class ContactTable(Base):
+    __tablename__ = "contacts"
+
+    id: Mapped[ReusableTypes.intpk]
+    by_user: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    email: Mapped[str | None] = mapped_column(default=None)
+    telegram: Mapped[ReusableTypes.str20 | None] = mapped_column(default=None)
+    phone_number: Mapped[PositiveInt | None] = mapped_column(default=None)
+
+    user: Mapped["UserTable"] = relationship(
+        back_populates="contacts",
+    )
