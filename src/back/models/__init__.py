@@ -1,7 +1,9 @@
-from .common import Base, UserTable, AdTable
+from .common import Base, UserTable, AdTable, ContactTable, CategoryTable
 
 __all__ = (
     "Base",
     "UserTable",
-    "AdTable"
+    "AdTable",
+    "ContactTable",
+    "CategoryTable"
 )
