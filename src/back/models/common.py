@@ -77,7 +77,7 @@ class CategoryTable(Base):
     id: Mapped[ReusableTypes.intpk]
     category_name: Mapped[ReusableTypes.str40]
 
-    ads_of_each: Mapped["AdTable"] = relationship(
+    ads_in_category: Mapped["AdTable"] = relationship(
         back_populates="ad_category",
     )
 
