@@ -10,12 +10,11 @@ class ContactCard(BaseModel):
 
 
 class ContactCardCreateUpdate(ContactCard):
-    pass
+    by_user: PositiveInt
 
 
 class ContactCardFromDB(ContactCard):
     id: PositiveInt
-    by_user: PositiveInt
 
     class Config:
         from_attributes = True
