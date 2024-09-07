@@ -2,7 +2,7 @@ from models import UserTable, ContactTable
 from schemas import UserCreate, UserUpdate, ContactCardCreateUpdate
 from core import database as db
 
-from sqlalchemy import delete, insert
+from sqlalchemy import delete
 
 
 class UserORM:
