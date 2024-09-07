@@ -17,6 +17,10 @@ class UserLogin(User):
     pass
 
 
+class UserUpdate(User):
+    pass
+
+
 class UserFromDB(User):
     id: PositiveInt
     signup_timestamp: dt
