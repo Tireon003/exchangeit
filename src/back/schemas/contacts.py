@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, PositiveInt
+from typing import TYPE_CHECKING
 
-from models import UserTable
+if TYPE_CHECKING:
+    from schemas import UserFromDB
 
 
 class ContactCard(BaseModel):
@@ -21,4 +23,4 @@ class ContactCardFromDB(ContactCard):
 
 
 class ContactCardDBRelUser(ContactCardFromDB):
-    user: "UserTable"
+    user: "UserFromDB"

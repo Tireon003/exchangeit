@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, PositiveInt
+from typing import TYPE_CHECKING
 
-from models import AdTable
+if TYPE_CHECKING:
+    from schemas import AdFromDB
 
 
 class Category(BaseModel):
@@ -19,4 +21,4 @@ class CategoryFromDB(Category):
 
 
 class CategoryDBRelAds(CategoryFromDB):
-    ads_in_category: list["AdTable"]
+    ads_in_category: list["AdFromDB"]

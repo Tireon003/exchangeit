@@ -1,7 +1,9 @@
 from pydantic import BaseModel, PositiveInt, Field
 from datetime import datetime as dt
+from typing import TYPE_CHECKING
 
-from models import UserTable, CategoryTable
+if TYPE_CHECKING:
+    from schemas import UserFromDB, ContactCardFromDB
 
 
 class Ad(BaseModel):
@@ -30,12 +32,12 @@ class AdFromDB(Ad):
 
 
 class AdDBRelBelongsto(AdFromDB):
-    belongs_to: "UserTable"
+    belongs_to: "UserFromDB"
 
 
 class AdDBRelInFavorites(AdFromDB):
-    in_user_favorites: list["UserTable"]
+    in_user_favorites: list["UserFromDB"]
 
 
 class AdDBRelCategory(AdFromDB):
-    ad_category: "CategoryTable"
+    ad_category: "ContactCardFromDB"
