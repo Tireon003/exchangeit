@@ -67,7 +67,7 @@ class AdTable(Base):
     )
 
     ad_category: Mapped["CategoryTable"] = relationship(
-        back_populates="ads_of_each",
+        back_populates="ads_in_category",
     )
 
 
