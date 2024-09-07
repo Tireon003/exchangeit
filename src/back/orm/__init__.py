@@ -1,5 +1,7 @@
-from .crud import Crud
+from .user_queries import UserORM
+from.ads_queries import AdsORM
 
 __all__ = (
-    "Crud",
+    "UserORM",
+    "AdsORM",
 )
