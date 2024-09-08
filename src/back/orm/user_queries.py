@@ -24,7 +24,7 @@ class UserORM:
             await session.commit()
 
     @staticmethod
-    async def select_user(user_id: int):
+    async def select_user_by_id(user_id: int):
         async with db.create_async_session() as session:
             user = await session.get(UserTable, user_id)
             return user
