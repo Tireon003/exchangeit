@@ -63,3 +63,14 @@ class AdsORM:
             ad_dict.update({"by_user": user_id})
             session.add(AdTable(**ad_dict))
             await session.commit()
+
+    @staticmethod
+    async def select_ad_by_id(ad_id: int):
+        async with db.create_async_session() as session:
+            query = select(AdTable).filter_by(id=ad_id)
+            result = await session.scalars(query)
+            ad = result.one_or_none()
+            if ad:
+                ad_model = AdFromDB.model_validate(ad)
+                return ad_model
+
