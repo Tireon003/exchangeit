@@ -70,6 +70,11 @@ class AdTable(Base):
         back_populates="ads_in_category",
     )
 
+    ad_contacts: Mapped["ContactTable"] = relationship(
+        back_populates="ads_with_contact",
+        secondary="users"
+    )
+
 
 class CategoryTable(Base):
     __tablename__ = "categories"
@@ -106,4 +111,9 @@ class ContactTable(Base):
 
     user: Mapped["UserTable"] = relationship(
         back_populates="contacts",
+    )
+
+    ads_with_contact: Mapped[list["AdTable"]] = relationship(
+        back_populates="ad_contacts",
+        secondary="users"
     )
