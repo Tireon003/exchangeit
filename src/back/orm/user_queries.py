@@ -1,8 +1,8 @@
-from models import UserTable, ContactTable
-from schemas import UserCreate, UserUpdate, ContactCardCreateUpdate
+from models import UserTable, ContactTable, AdTable
+from schemas import UserCreate, UserUpdate, ContactCardCreateUpdate, UserFromDB
 from core import database as db
 
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 
 
 class UserORM:
@@ -27,6 +27,14 @@ class UserORM:
     async def select_user_by_id(user_id: int):
         async with db.create_async_session() as session:
             user = await session.get(UserTable, user_id)
+            return user
+
+    @staticmethod
+    async def select_user_by_username(username: str):
+        async with db.create_async_session() as session:
+            query = select(UserTable).filter_by(username=username)
+            result = await session.scalars(query)
+            user = result.one_or_none()
             return user
 
     @staticmethod
