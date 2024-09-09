@@ -1,5 +1,5 @@
 from models import UserTable, ContactTable, AdTable
-from schemas import UserCreate, UserUpdate, ContactCardCreateUpdate, UserFromDB
+from schemas import UserCreate, UserUpdate, ContactCardCreate, UserFromDB
 from core import database as db
 
 from sqlalchemy import delete, select
@@ -14,7 +14,7 @@ class UserORM:
             session.add(new_user)
             await session.flush()
             await session.refresh(new_user)
-            contacts_model = ContactCardCreateUpdate.model_validate(
+            contacts_model = ContactCardCreate.model_validate(
                 {
                     "by_user": new_user.id,
                 }
