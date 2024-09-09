@@ -7,16 +7,16 @@ if TYPE_CHECKING:
 
 class ContactCard(BaseModel):
     email: str | None = Field(default=None)
-    telegram: str | None = Field(min_length=2, max_length=20, default=None)
+    telegram: str | None = Field(max_length=20, default=None)
     phone_number: PositiveInt | None = Field(default=None)
 
 
-class ContactCardCreateUpdate(ContactCard):
-    by_user: PositiveInt
+class ContactCardCreate(ContactCard):
+    by_user: int
 
 
 class ContactCardFromDB(ContactCard):
-    id: PositiveInt
+    id: int
 
     class Config:
         from_attributes = True
