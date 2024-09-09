@@ -11,7 +11,9 @@ class ContactORM:
     @staticmethod
     async def get_contact_from_ad(ad_id: int):
         async with (db.create_async_session() as session):
-            get_contact_from_ad_query = select(AdTable).options(joinedload(AdTable.ad_contacts))
+            get_contact_from_ad_query = select(AdTable). \
+                                        options(joinedload(AdTable.ad_contacts)). \
+                                        filter_by(id=ad_id)
             result = await session.scalars(get_contact_from_ad_query)
             ad_orm = result.one_or_none()
             if not ad_orm:
