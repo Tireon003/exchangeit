@@ -72,7 +72,7 @@ class AdTable(Base):
 
     ad_contacts: Mapped["ContactTable"] = relationship(
         back_populates="ads_with_contact",
-        secondary="users"
+        secondary="ads_contact"
     )
 
 
@@ -115,5 +115,18 @@ class ContactTable(Base):
 
     ads_with_contact: Mapped[list["AdTable"]] = relationship(
         back_populates="ad_contacts",
-        secondary="users"
+        secondary="ads_contact"
+    )
+
+
+class AdsContactsTable(Base):
+    __tablename__ = "ads_contact"
+
+    ad_id: Mapped[int] = mapped_column(
+        ForeignKey('ads.id', ondelete="CASCADE"),
+        primary_key=True,
+    )
+    contact_id: Mapped[int] = mapped_column(
+        ForeignKey('contacts.id', ondelete="CASCADE"),
+        primary_key=True,
     )
