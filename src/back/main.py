@@ -55,10 +55,27 @@ async def create_user(user_data: Annotated[UserCreate, Body()]):
         )
 
 
-@app.get("/ads")
+@app.get("/ads", response_model=list[dict])
 async def get_ads():
     ads = await AdsORM.search_ads_order_by_public_date()
-    return ads
+    ads_json = []
+    for item in ads:
+        ad = item.model_dump()
+        ad["created_at"] = item.created_at.isoformat()
+        ads_json.append(ad)
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=ads_json,
+    )
+
+
+@app.post("/users/{user_id}/ads/new")
+async def create_ad(ad_data: Annotated[AdCreate, Body()], user_id: Annotated[int, Path()]):
+    await AdsORM.insert_ad(ad_data, user_id)
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"msg": "successful"}
+    )
 
 
 @app.get("/ads/{ad_id}/contact")
