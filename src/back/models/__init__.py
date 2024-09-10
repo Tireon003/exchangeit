@@ -1,4 +1,4 @@
-from .common import Base, UserTable, AdTable, ContactTable, CategoryTable, FavoriteTable
+from .common import Base, UserTable, AdTable, ContactTable, CategoryTable, FavoriteTable, AdsContactsTable
 
 __all__ = (
     "Base",
@@ -7,4 +7,5 @@ __all__ = (
     "ContactTable",
     "CategoryTable",
     "FavoriteTable",
+    "AdsContactsTable"
 )
