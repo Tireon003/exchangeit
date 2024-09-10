@@ -1,5 +1,5 @@
 from core import database as db
-from models import AdTable
+from models import AdTable, ContactTable
 from schemas import ContactCardFromDB
 
 from sqlalchemy import select
@@ -20,3 +20,12 @@ class ContactORM:
                 return
             contact_model = ContactCardFromDB.model_validate(ad_orm.ad_contacts)
             return contact_model
+
+    @staticmethod
+    async def get_contact_id_by_user_id(user_id: int) -> int:
+        async with db.create_async_session() as session:
+            query = select(ContactTable).filter_by(by_user=user_id)
+            result = await session.scalars(query)
+            contacts = result.one_or_none()
+            return contacts.id if contacts else None
+
