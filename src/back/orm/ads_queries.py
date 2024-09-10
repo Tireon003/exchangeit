@@ -1,6 +1,7 @@
 from core import database as db
-from models import AdTable, FavoriteTable
+from models import AdTable, FavoriteTable, AdsContactsTable
 from schemas import AdFromDB, AdCreate
+from .contact_queries import ContactORM
 
 from sqlalchemy import select, and_
 
@@ -58,10 +59,19 @@ class AdsORM:
 
     @staticmethod
     async def insert_ad(ad: AdCreate, user_id: int):
+        contact_id = await ContactORM.get_contact_id_by_user_id(user_id)
         async with db.create_async_session() as session:
             ad_dict = ad.model_dump()
             ad_dict.update({"by_user": user_id})
-            session.add(AdTable(**ad_dict))
+            ad_dto = AdTable(**ad_dict)
+            session.add(ad_dto)
+            await session.flush()
+            await session.refresh(ad_dto)
+            ad_contact_sec = AdsContactsTable(**{
+                "ad_id": ad_dto.id,
+                "contact_id": contact_id
+            })
+            session.add(ad_contact_sec)
             await session.commit()
 
     @staticmethod
