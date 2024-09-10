@@ -1,10 +1,11 @@
 import uvicorn
-from fastapi import FastAPI, Body, Path, HTTPException, status
+from fastapi import FastAPI, Body, Path, HTTPException, status, Response
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from typing import Annotated
 
 from orm import UserORM, AdsORM, ContactORM
-from schemas import UserCreate
+from schemas import UserCreate, AdCreate
 
 allowed_origins = [
     "http://localhost:5173",
@@ -34,15 +35,19 @@ async def root():
     }
 
 
-@app.post("/create_user")
+@app.post("/users/new_user")
 async def create_user(user_data: Annotated[UserCreate, Body()]):
     founded_user = await UserORM.select_user_by_username(user_data.username)
     if not founded_user:
         await UserORM.create_user(user_data)
-        return {
-            "message": "User created",
-            "data": user_data.model_dump()
-        }
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "message": "User created",
+                "data": user_data.model_dump()
+            },
+        )
+
     else:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
