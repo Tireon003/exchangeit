@@ -1,6 +1,6 @@
-from pydantic import BaseModel, PositiveInt, Field
+from pydantic import BaseModel, PositiveInt, Field, PlainSerializer
 from datetime import datetime as dt
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
 
 if TYPE_CHECKING:
     from schemas import UserFromDB, ContactCardFromDB
@@ -25,7 +25,7 @@ class AdUpdate(Ad):
 class AdFromDB(Ad):
     id: PositiveInt
     by_user: PositiveInt
-    created_at: dt
+    created_at: Annotated[dt, PlainSerializer(lambda val: val.strftime(format="%Y-%m-%d %H:%M:%S"), return_type=str)]
 
     class Config:
         from_attributes = True
