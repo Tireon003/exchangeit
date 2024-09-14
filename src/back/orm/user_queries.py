@@ -1,7 +1,7 @@
 from models import UserTable, ContactTable, AdTable
 from schemas import UserCreate, UserUpdate, ContactCardCreate, UserFromDB
 from core import database as db
-
+from fastapi_cache.decorator import cache
 from sqlalchemy import delete, select
 
 
@@ -24,10 +24,14 @@ class UserORM:
             await session.commit()
 
     @staticmethod
+    @cache(expire=60)
     async def select_user_by_id(user_id: int):
         async with db.create_async_session() as session:
-            user = await session.get(UserTable, user_id)
-            return user
+            user = await session.get(UserTable, id=user_id)
+            if not user:
+                return
+            user_model = UserFromDB(**user.model_dump())
+            return user_model
 
     @staticmethod
     async def select_user_by_username(username: str):

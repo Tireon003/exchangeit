@@ -3,12 +3,14 @@ from models import AdTable, FavoriteTable, AdsContactsTable
 from schemas import AdFromDB, AdCreate
 from .contact_queries import ContactORM
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
+from fastapi_cache.decorator import cache
 
 
 class AdsORM:
 
     @staticmethod
+    @cache(expire=60)
     async def search_ads_order_by_public_date() -> list[AdFromDB] | None:
         async with db.create_async_session() as session:
             query = select(AdTable).order_by(AdTable.created_at)
@@ -17,26 +19,46 @@ class AdsORM:
             return ads_by_date
 
     @staticmethod
+    @cache(expire=60)
     async def search_ads_by_item_give(item_name: str) -> list[AdFromDB] | None:
         async with db.create_async_session() as session:
-            query = select(AdTable).where(AdTable.item_give.like(f"%{item_name}%"))
+            query = (
+                select(AdTable)
+                .where(
+                    func.lower(AdTable.item_give).like(f"%{item_name.casefold()}%")
+                )
+            )
             result = await session.scalars(query)
             ads_by_item_give = [AdFromDB.model_validate(row) for row in result.all()]
             return ads_by_item_give
 
     @staticmethod
+    @cache(expire=60)
     async def search_ads_by_item_get(item_name: str) -> list[AdFromDB] | None:
         async with db.create_async_session() as session:
-            query = select(AdTable).where(AdTable.item_get.like(f"%{item_name}%"))
+            query = (
+                select(AdTable)
+                .where(
+                    func.lower(AdTable.item_get).like(f"%{item_name.casefold()}%")
+                )
+            )
             result = await session.scalars(query)
             ads_by_item_get = [AdFromDB.model_validate(row) for row in result.all()]
             return ads_by_item_get
 
     @staticmethod
+    @cache(expire=60)
     async def search_ads_give_get(item_give: str, item_get: str) -> list[AdFromDB] | None:
         async with db.create_async_session() as session:
-            query = select(AdTable).where(and_(AdTable.item_give.like(f"%{item_give}%"),
-                                               AdTable.item_get.like(f"%{item_get}%")))
+            query = (
+                select(AdTable)
+                .where(
+                    and_(
+                        func.lower(AdTable.item_get).like(f"%{item_give.casefold()}%"),
+                        func.lower(AdTable.item_get).like(f"%{item_get.casefold()}%")
+                    )
+                )
+            )
             result = await session.scalars(query)
             ads_give_get = [AdFromDB.model_validate(row) for row in result.all()]
             return ads_give_get
