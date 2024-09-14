@@ -27,12 +27,14 @@ class UserORM:
 
     @staticmethod
     @cache(expire=60)
-    async def select_user_by_id(user_id: int):
+    async def select_user_by_id(user_id: int) -> UserFromDB:
         async with db.create_async_session() as session:
-            user = await session.get(UserTable, id=user_id)
+            query = select(UserTable).filter_by(id=user_id)
+            result = await session.scalars(query)
+            user = result.one_or_none()
             if not user:
                 return
-            user_model = UserFromDB(**user.model_dump())
+            user_model = UserFromDB.model_validate(user)
             return user_model
 
     @staticmethod
