@@ -12,7 +12,34 @@ allowed_origins = [
     "http://127.0.0.1:5173"
 ]
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+
+    redis = await aioredis.from_url(
+        url="redis://redis:6379",
+        encoding="utf-8",  # по дефолту такое же значение
+    )
+    FastAPICache.init(
+        RedisBackend(redis),
+        prefix="fastapi-cache",
+    )
+
+    try:
+        await redis.ping()
+        print("Connected to Redis successfully")
+    except Exception as e:
+        print(f"Failed to connect to Redis: {e}")
+
+    yield
+
+    # Shutdown
+    await redis.close()
+
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
