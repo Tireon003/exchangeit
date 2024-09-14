@@ -8,7 +8,7 @@ from sqlalchemy import delete, select
 class UserORM:
 
     @staticmethod
-    async def create_user(user_obj: UserCreate):
+    async def create_user(user_obj: UserCreate) -> UserFromDB:
         async with db.create_async_session() as session:
             new_user = UserTable(**user_obj.model_dump())
             session.add(new_user)
@@ -22,6 +22,8 @@ class UserORM:
             contact_card = ContactTable(**contacts_model.model_dump())
             session.add(contact_card)
             await session.commit()
+            created_user_model = UserFromDB.model_validate(new_user)
+            return created_user_model
 
     @staticmethod
     @cache(expire=60)
