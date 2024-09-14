@@ -49,19 +49,6 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def root():
-    response = list()
-    response.append(await AdsORM.search_ads_order_by_public_date())
-    response.append(await AdsORM.search_ads_by_item_give("some item"))
-    response.append(await AdsORM.search_ads_by_item_get("another item"))
-    response.append(await AdsORM.search_ads_give_get("yet another item", "other item"))
-    return {
-        "message": response,
-        "status": "200 OK",
-    }
-
-
 @app.post("/users/new_user")
 async def create_user(user_data: Annotated[UserCreate, Body()]):
     founded_user = await UserORM.select_user_by_username(user_data.username)
