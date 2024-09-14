@@ -9,7 +9,7 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
 from orm import UserORM, AdsORM, ContactORM
-from schemas import UserCreate, AdCreate
+from schemas import UserCreate, AdCreate, AdFromDB, SearchData, UserFromDB
 
 allowed_origins = [
     "http://localhost:5173",
@@ -72,18 +72,32 @@ async def create_user(user_data: Annotated[UserCreate, Body()]):
         )
 
 
-@app.get("/ads", response_model=list[dict])
-async def get_ads():
-    ads = await AdsORM.search_ads_order_by_public_date()
-    ads_json = []
-    for item in ads:
-        ad = item.model_dump()
-        ad["created_at"] = item.created_at.isoformat()
-        ads_json.append(ad)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=ads_json,
-    )
+@app.get("/users/{user_id}", response_model=UserFromDB, status_code=status.HTTP_200_OK)
+async def get_user(user_id: Annotated[int, Path()]):
+    user = await UserORM.select_user_by_id(user_id)
+    if user:
+        return user
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"info": f"User with id {user_id} not found"},
+        )
+
+
+@app.post("/ads", response_model=list[AdFromDB] | None, status_code=status.HTTP_200_OK)
+async def get_ads(search_result: Annotated[SearchData, Body()]):
+    if len(search_result.item_get) and len(search_result.item_give):
+        ads = await AdsORM.search_ads_give_get(
+            item_get=search_result.item_get,
+            item_give=search_result.item_give,
+        )
+    elif len(search_result.item_get):
+        ads = await AdsORM.search_ads_by_item_get(search_result.item_get)
+    elif len(search_result.item_give):
+        ads = await AdsORM.search_ads_by_item_give(search_result.item_give)
+    else:
+        ads = await AdsORM.search_ads_order_by_public_date()
+    return ads if ads else []
 
 
 @app.post("/users/{user_id}/ads/new")
