@@ -62,7 +62,6 @@ async def create_user(user_data: Annotated[UserCreate, Body()]):
             status_code=status.HTTP_201_CREATED,
             content={
                 "message": "User created",
-                "data": user_data.model_dump()
             },
         )
 
