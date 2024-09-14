@@ -1,8 +1,12 @@
 import uvicorn
-from fastapi import FastAPI, Body, Path, HTTPException, status, Response
+from contextlib import asynccontextmanager
+from redis import asyncio as aioredis
+from fastapi import FastAPI, Body, Path, HTTPException, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from typing import Annotated
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
 from orm import UserORM, AdsORM, ContactORM
 from schemas import UserCreate, AdCreate
