@@ -3,6 +3,7 @@ from .category import CategoryFromDB, CategoryCreate, CategoryDBRelAds
 from .contacts import ContactCardFromDB, ContactCardCreate, ContactCardDBRelUser
 from .user import UserFromDB, UserCreate, UserUpdate, UserLogin, UserDBRelAds, UserDBRelContacts, UserDBRelFavAds
 from .ads_contacts import AdsContactsFromDB
+from .search import SearchData
 
 __all__ = (
     'AdFromDB',
@@ -24,5 +25,6 @@ __all__ = (
     'UserDBRelContacts',
     'UserDBRelFavAds',
     'UserUpdate',
-    'AdsContactsFromDB'
+    'AdsContactsFromDB',
+    'SearchData',
 )
