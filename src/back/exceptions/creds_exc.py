@@ -1,0 +1,2 @@
+class InvalidCredsStructure(Exception):
+    pass
