@@ -4,6 +4,7 @@ from .contacts import ContactCardFromDB, ContactCardCreate, ContactCardDBRelUser
 from .user import UserFromDB, UserCreate, UserUpdate, UserLogin, UserDBRelAds, UserDBRelContacts, UserDBRelFavAds
 from .ads_contacts import AdsContactsFromDB
 from .search import SearchData
+from .responses import BaseResponse, CreatedResponse, UserExistsResponse, UserDoesNotExistsResponse
 
 __all__ = (
     'AdFromDB',
@@ -27,4 +28,8 @@ __all__ = (
     'UserUpdate',
     'AdsContactsFromDB',
     'SearchData',
+    'BaseResponse',
+    'CreatedResponse',
+    'UserExistsResponse',
+    'UserDoesNotExistsResponse'
 )
