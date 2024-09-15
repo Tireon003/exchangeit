@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     # API variables
     API_EXT_PORT: int
+    # SECRET KEY for hashing
+    HASH_SECRET: str
 
     @property
     def db_url(self):
@@ -19,6 +21,10 @@ class Settings(BaseSettings):
     @property
     def api_external_port(self):
         return self.API_EXT_PORT
+
+    @property
+    def hash_secret(self):
+        return self.HASH_SECRET
 
     model_config = SettingsConfigDict(env_file=".env")
 
