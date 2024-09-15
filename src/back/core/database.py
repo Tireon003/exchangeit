@@ -11,14 +11,8 @@ class Database:
 
     @asynccontextmanager
     async def create_async_session(self):
-        try:
-            async with self.asession() as session:
-                yield session
-        except Exception as e:
-            print(e)
-            await session.rollback()
-        finally:
-            await session.close()
+        async with self.asession() as session:
+            yield session
 
 
 database = Database()
