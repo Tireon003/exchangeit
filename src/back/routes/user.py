@@ -36,7 +36,7 @@ async def get_user(
         raise UserNotFoundException(user_id)
 
 
-@router.post("/{user_id}/ads/new", response_model=CreatedResponse)
+@router.put("/{user_id}/ads/new", response_model=CreatedResponse)
 async def create_ad(
         ad_data: Annotated[AdCreate, Body()],
         user_id: Annotated[int, Path()],
