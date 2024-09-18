@@ -1,15 +1,13 @@
 import uvicorn
 from contextlib import asynccontextmanager
 from redis import asyncio as aioredis
-from fastapi import FastAPI, Body, Path, status
+from fastapi import FastAPI, Request, HTTPException, status
 from starlette.middleware.cors import CORSMiddleware
-from typing import Annotated
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
-from orm import AdsORM, ContactORM
-from schemas import AdFromDB, SearchData
 from routes import auth_router, users_router, ads_router
+from exceptions import ExpiredTokenException, InvalidTokenException
 
 allowed_origins = [
     "http://localhost:5173",
@@ -55,6 +53,24 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(ads_router)
+
+
+@app.exception_handler(ExpiredTokenException)
+async def handle_expired_token_exception(request: Request, exc: ExpiredTokenException):
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Access token expired",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+
+
+@app.exception_handler(InvalidTokenException)
+async def handle_expired_token_exception(request: Request, exc: InvalidTokenException):
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid access token",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 if __name__ == "__main__":
