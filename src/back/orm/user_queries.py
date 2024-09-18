@@ -40,7 +40,10 @@ class UserORM:
         query = select(UserTable).filter_by(username=username)
         result = await session.scalars(query)
         user = result.one_or_none()
-        return user
+        if not user:
+            return
+        user_model = UserFromDB.model_validate(user)
+        return user_model
 
     @staticmethod
     async def update_user_password(updated_user_obj: UserUpdate, session: AsyncSession):
