@@ -1,7 +1,5 @@
 import jwt
 import datetime as dt
-from fastapi import HTTPException, status
-from enum import Enum
 
 from config import settings
 from exceptions import ExpiredTokenException, InvalidTokenException
@@ -18,7 +16,7 @@ class JwtService:
 
     @classmethod
     def exp_time(cls, token_type: TokenType):
-        if token_type == TokenType.access:
+        if token_type.value == TokenType.access:
             return cls.EXP_ACCESS
         else:
             return cls.EXP_REFRESH
@@ -41,7 +39,7 @@ class JwtService:
     def verify_token(cls, token: str) -> dict:
         try:
             payload = jwt.decode(token, cls.SECRET, algorithms=[cls.ALG])
-            if payload["type"] not in ["access", "refresh"]:
+            if payload["type"] not in TokenType:
                 raise InvalidTokenException()
             exp_time = dt.datetime.fromtimestamp(payload["exp"], dt.timezone.utc)
             expired = exp_time < dt.datetime.now(dt.timezone.utc)
