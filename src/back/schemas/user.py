@@ -19,6 +19,11 @@ class UserLogin(User):
     pass
 
 
+class UserCreds(BaseModel):
+    username: str = Field(max_length=20)
+    password: str = Field(min_length=8)
+
+
 class UserUpdate(User):
     pass
 
