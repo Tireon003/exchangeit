@@ -25,32 +25,34 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="flex justify-between items-center">
-      <div className="">
-        <input
-          type="text"
-          value={input1}
-          onChange={(e) => handleInputChange(0, e.target.value)}
-          placeholder="give"
-          className="min-w-fit px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div className="my-auto mx-4">
-        to
-      </div>
+    <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 grow-2">
+        <div className="flex flex-nowrap justify-between grow">
+          <div className="">
+            <input
+              type="text"
+              value={input1}
+              onChange={(e) => handleInputChange(0, e.target.value)}
+              placeholder="give"
+              className="min-w-fit px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="my-auto mx-4">
+            to
+          </div>
 
-      <div className="">
-        <input
-          type="text"
-          value={input2}
-          onChange={(e) => handleInputChange(1, e.target.value)}
-          placeholder="get"
-          className="min-w-fit px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+          <div className="">
+            <input
+              type="text"
+              value={input2}
+              onChange={(e) => handleInputChange(1, e.target.value)}
+              placeholder="get"
+              className="min-w-fit px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
       <button
         onClick={handleSearch}
-        className="my-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        className="grow my-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
       >
         Search
       </button>
