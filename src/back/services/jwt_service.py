@@ -5,11 +5,7 @@ from enum import Enum
 
 from config import settings
 from exceptions import ExpiredTokenException, InvalidTokenException
-
-
-class TokenType(Enum):
-    access = "access"
-    refresh = "refresh"
+from schemas import TokenType
 
 
 class JwtService:
