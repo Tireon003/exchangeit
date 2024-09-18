@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext } from 'react';
 import AdList from './modules/AdList';
 import SearchPanel from './modules/SearchPanel';
+import AsidePanel from './modules/AsidePanel';
 import axios from 'axios';
 
 const SearchContext = createContext();
@@ -30,13 +31,21 @@ const App = () => {
   }
 
   return (
-      <SearchContext.Provider value={[searchResult, setSearchResult]}>
-          <div className="mx-auto px-24">
-              <SearchPanel />
-              <AdList ads={ads}/>
-          </div>
-      </SearchContext.Provider>
-  );
+  <SearchContext.Provider value={[searchResult, setSearchResult]}>
+    <div className="flex h-screen">
+      <main className="flex-1 overscroll-contain scroll-hidden">
+        <div className="mx-auto px-24 scroll-auto">
+          <SearchPanel />
+          <AdList ads={ads}/>
+        </div>
+      </main>
+      <aside className="top-0 right-0 w-64 h-full bg-white">
+        <AsidePanel />
+      </aside>
+    </div>
+  </SearchContext.Provider>
+);
+
 };
 
 export default App;
