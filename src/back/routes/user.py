@@ -11,13 +11,25 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies import get_async_session, validate_token
-from schemas import UserFromDB, AdCreate, CreatedResponse, AccessTokenPayload
+from schemas import UserDBRelsAdsFavContacts, UserFromDB, AdCreate, CreatedResponse, AccessTokenPayload
 from orm import UserORM, AdsORM
+from exceptions import UserNotFoundException
 
 router = APIRouter(
     prefix="/api/users",
     tags=["users"],
 )
+
+
+@router.get("/user", response_model=UserDBRelsAdsFavContacts, status_code=status.HTTP_200_OK)
+async def get_user_data_full(
+        token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
+        db_session: AsyncSession = Depends(get_async_session)
+):
+    user_data_full = await UserORM.select_user_by_id(token_payload.usr, db_session)
+    if not user_data_full:
+        raise UserNotFoundException(token_payload.usr)
+    return user_data_full
 
 
 @router.get("/{user_id}", response_model=UserFromDB, status_code=status.HTTP_200_OK)
