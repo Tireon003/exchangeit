@@ -25,7 +25,7 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 grow-2">
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-2 gap-y-2 grow-2">
         <div className="flex flex-nowrap justify-between grow">
           <div className="">
             <input
