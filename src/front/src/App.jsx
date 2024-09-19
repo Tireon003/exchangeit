@@ -26,15 +26,15 @@ const App = () => {
       );
       setAds(response.data);
     } catch (error) {
-      console.error('Ошибка при получении объявлений:', error);
+      console.log('Ошибка при получении объявлений:', error);
     }
   }
 
   return (
   <SearchContext.Provider value={[searchResult, setSearchResult]}>
     <div className="flex h-screen">
-      <main className="flex-1 overscroll-contain scroll-hidden">
-        <div className="mx-auto px-24 scroll-auto">
+      <main className="flex-1">
+        <div className="mx-auto px-24 overflow-y-auto max-h-screen">
           <SearchPanel />
           <AdList ads={ads}/>
         </div>
