@@ -1,7 +1,8 @@
 from models import UserTable, ContactTable, AdTable
-from schemas import UserCreate, UserUpdate, ContactCardCreate, UserFromDB
+from schemas import UserCreate, UserUpdate, ContactCardCreate, UserFromDB, UserDBRelsAdsFavContacts
 from fastapi_cache.decorator import cache
 from sqlalchemy import delete, select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -26,13 +27,21 @@ class UserORM:
 
     @staticmethod
     @cache(expire=60)
-    async def select_user_by_id(user_id: int, session: AsyncSession) -> UserFromDB:
-        query = select(UserTable).filter_by(id=user_id)
+    async def select_user_by_id(user_id: int, session: AsyncSession) -> UserDBRelsAdsFavContacts:
+        query = (
+            select(UserTable)
+            .filter_by(id=user_id)
+            .options(
+                joinedload(UserTable.user_ads),
+                joinedload(UserTable.favorite_ads),
+                joinedload(UserTable.contacts)
+            )
+        )
         result = await session.scalars(query)
         user = result.one_or_none()
         if not user:
             return
-        user_model = UserFromDB.model_validate(user)
+        user_model = UserDBRelsAdsFavContacts.model_validate(user)
         return user_model
 
     @staticmethod
@@ -45,7 +54,7 @@ class UserORM:
         user_model = UserFromDB.model_validate(user)
         return user_model
 
-    @staticmethod
+    @staticmethod  #todo переписать под хешированные пароли
     async def update_user_password(updated_user_obj: UserUpdate, session: AsyncSession):
         user = await session.get(UserTable, updated_user_obj.id)
         user = UserTable(**updated_user_obj.model_dump())
