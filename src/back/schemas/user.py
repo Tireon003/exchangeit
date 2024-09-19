@@ -2,8 +2,9 @@ from pydantic import BaseModel, Field, PositiveInt, PlainSerializer
 from datetime import datetime as dt
 from typing import TYPE_CHECKING, Annotated
 
-if TYPE_CHECKING:
-    from schemas import AdFromDB, ContactCardFromDB
+
+from .ad import AdFromDB
+from .contacts import ContactCardFromDB
 
 
 class User(BaseModel):
@@ -45,7 +46,7 @@ class UserFromDB(User):
 
 
 class UserDBRelFavAds(UserFromDB):
-    favorite_ads: "AdFromDB"
+    favorite_ads: list["AdFromDB"]
 
 
 class UserDBRelAds(UserFromDB):
@@ -54,3 +55,7 @@ class UserDBRelAds(UserFromDB):
 
 class UserDBRelContacts(UserFromDB):
     contacts: "ContactCardFromDB"
+
+
+class UserDBRelsAdsFavContacts(UserDBRelFavAds, UserDBRelAds, UserDBRelContacts):
+    pass

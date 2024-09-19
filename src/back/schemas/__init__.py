@@ -10,6 +10,7 @@ from .user import (
     UserDBRelContacts,
     UserDBRelFavAds,
     UserCreds,
+    UserDBRelsAdsFavContacts,
 )
 from .ads_contacts import AdsContactsFromDB
 from .search import SearchData
@@ -35,6 +36,7 @@ __all__ = (
     'UserDBRelAds',
     'UserDBRelContacts',
     'UserDBRelFavAds',
+    'UserDBRelsAdsFavContacts',
     'UserUpdate',
     'UserCreds',
     'AdsContactsFromDB',
