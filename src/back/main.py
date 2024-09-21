@@ -2,7 +2,7 @@ import uvicorn
 from contextlib import asynccontextmanager
 from redis import asyncio as aioredis
 from fastapi import FastAPI, Request, HTTPException, status
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
