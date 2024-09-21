@@ -1,6 +1,6 @@
 from typing import Annotated
-from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+import datetime as dt
 
 from fastapi import (
     APIRouter,
@@ -44,14 +44,13 @@ async def sign_up(
         return CreatedResponse()
 
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login_user(
     response: Response,
     login_creds: Annotated[UserCreds, Depends(get_login_form)],
     db_session: AsyncSession = Depends(get_async_session)
 ):
     user_from_db = await UserORM.select_user_by_username(login_creds.username, db_session)
-    print(user_from_db.model_dump())
     if not user_from_db:
         raise UserNotFoundException(login_creds.username)
     if not HS.verify(login_creds.password, user_from_db.hashed_password):
@@ -65,16 +64,15 @@ async def login_user(
         payload=payload,
         token_type=TokenType.access,
     )
+
     response.set_cookie(
         key="access_token",
         value=user_access_token,
-        httponly=True,
-        secure=True,
+        expires=dt.timedelta(days=7).days * 86400,
+        max_age=dt.timedelta(days=7).days * 86400,
     )
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "access_token": user_access_token,
-            "token_type": "Bearer",
-        }
-    )
+
+    return {
+        "access_token": user_access_token,
+        "token_type": "Bearer",
+    }
