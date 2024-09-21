@@ -37,8 +37,8 @@ class UserORM:
                 joinedload(UserTable.contacts)
             )
         )
-        result = await session.scalars(query)
-        user = result.one_or_none()
+        result = await session.execute(query)
+        user = result.unique().scalars().one_or_none()
         if not user:
             return
         user_model = UserDBRelsAdsFavContacts.model_validate(user)
