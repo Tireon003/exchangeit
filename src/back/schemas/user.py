@@ -46,11 +46,11 @@ class UserFromDB(User):
 
 
 class UserDBRelFavAds(UserFromDB):
-    favorite_ads: list["AdFromDB"]
+    favorite_ads: list["AdFromDB"] | None
 
 
 class UserDBRelAds(UserFromDB):
-    user_ads: list["AdFromDB"]
+    user_ads: list["AdFromDB"] | None
 
 
 class UserDBRelContacts(UserFromDB):
