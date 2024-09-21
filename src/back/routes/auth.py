@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import (
     APIRouter,
-    Body,
+    Form,
     status,
     Depends,
     HTTPException,
@@ -27,15 +27,20 @@ router = APIRouter(
 
 @router.post("/signup", response_model=CreatedResponse, status_code=status.HTTP_201_CREATED)
 async def sign_up(
-        user_creds: Annotated[UserCreate, Body()],
+        username: Annotated[str, Form()],
+        password: Annotated[str, Form()],
         db_session: AsyncSession = Depends(get_async_session)
 ):
-    user = await UserORM.select_user_by_username(user_creds.username, db_session)
+    user = await UserORM.select_user_by_username(username, db_session)
     if user:
-        raise UserAlreadyExists(user_creds.username)
+        raise UserAlreadyExists(username)
     else:
-        user_creds.hashed_password = HS.encrypt(user_creds.hashed_password)
-        await UserORM.create_user(user_creds, db_session)
+        hashed_password = HS.encrypt(password)
+        user_schema = UserCreate(**{
+            "username": username,
+            "hashed_password": hashed_password,
+        })
+        await UserORM.create_user(user_schema, db_session)
         return CreatedResponse()
 
 
