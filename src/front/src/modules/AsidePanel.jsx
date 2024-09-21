@@ -1,11 +1,21 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import {SignupModal} from '../components/SignupModal'
 
 
 const AsidePanel = () => {
 
     const [userData, setUserData] = useState(null);
+    const [isModal, setIsModal] = useState(false);
+
+    const closeModal = () => {
+        setIsModal(false);
+    }
+
+    const openModal = () => {
+        setIsModal(true);
+    }
 
     const getUserData = async () => {
         try {
@@ -57,7 +67,10 @@ const AsidePanel = () => {
             ) : (
                 <>
                     <div>You are not logged in. Sign up or log in to open all features</div>
-                    <button className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300">
+                    <button
+                        className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+                        onClick={openModal}
+                    >
                       Sign Up
                     </button>
 
@@ -66,6 +79,7 @@ const AsidePanel = () => {
                     </button>
                 </>
             )}
+            <SignupModal isOpen={isModal} onClose={closeModal}/>
         </div>
     );
 };
