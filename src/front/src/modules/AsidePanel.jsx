@@ -1,8 +1,9 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import {SignupModal} from '../components/SignupModal'
 import {LoginModal} from '../components/LoginModal'
+import { jwtDecode } from 'jwt-decode';
 
 
 const AsidePanel = () => {
@@ -32,34 +33,39 @@ const AsidePanel = () => {
         setIsLoginModal(true);
     }
 
-    const getUserData = async () => {
+    const getUserFromToken = (token) => {
         try {
-            const token = Cookies.get('access_token');
-            if (token) {
-                const response = await axios.get(
-                    'http://localhost:8008/api/users/user',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
-                );
-                setUserData(response.data);
-            }
-        } catch (error) {
-            console.error("Ошибка при получении данных пользователя:", error);
-            await logOutUser();
+            return jwtDecode(token);
+        } catch {
+            setIsLoggedIn(false);
         }
-    };
-
-    const logOutUser = async () => {
-        Cookies.remove('access_token')
-        setUserData(null);
-        setIsLoggedIn(false);
     }
 
+    const checkUserLoggedIn = () => {
+        try {
+            const token = Cookies.get('access_token');
+            if (!token) {
+                setIsLoggedIn(false);
+                setUserData(null);
+                return;
+            }
+            const data = getUserFromToken(token);
+            setUserData(data);
+            setIsLoggedIn(true);
+        } catch {
+            setIsLoggedIn(false);
+            setUserData(null);
+        };
+    };
+
+    const logOutUser = () => {
+        Cookies.remove('access_token');
+        setUserData(null);
+        setIsLoggedIn(false);
+    };
+
     useEffect(() => {
-        getUserData();
+        checkUserLoggedIn();
     }, [isLoggedIn]);
 
     return (
@@ -67,7 +73,7 @@ const AsidePanel = () => {
             {userData ? (
                 <>
                   <div className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer">
-                    {userData.username}
+                    {userData.name}
                   </div>
                   <div className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer">
                     Main
