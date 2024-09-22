@@ -59,7 +59,10 @@ async def login_user(
             detail="Wrong password",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    payload = {"usr": user_from_db.id}
+    payload = {
+        "usr": user_from_db.id,
+        "name": user_from_db.username,
+    }
     user_access_token = JwtService.create_token(
         payload=payload,
         token_type=TokenType.access,
