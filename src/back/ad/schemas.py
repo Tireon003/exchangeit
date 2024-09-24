@@ -3,7 +3,8 @@ from datetime import datetime as dt
 from typing import TYPE_CHECKING, Annotated
 
 if TYPE_CHECKING:
-    from schemas import UserFromDB, ContactCardFromDB
+    from contact.schemas import ContactCardFromDB
+    from user.schemas import UserFromDB
 
 
 class Ad(BaseModel):
@@ -41,3 +42,11 @@ class AdDBRelInFavorites(AdFromDB):
 
 class AdDBRelCategory(AdFromDB):
     ad_category: "ContactCardFromDB"
+
+
+class SearchData(BaseModel):
+    item_give: str = Field(alias="itemGive")
+    item_get: str = Field(alias="itemGet")
+
+    class Config:
+        populate_by_name = True

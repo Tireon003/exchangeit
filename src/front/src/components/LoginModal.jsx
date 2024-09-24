@@ -42,6 +42,7 @@ export const LoginModal = ({ isOpen, onClose, setLogged }) => {
       if (response.status === 200) {
           setLogged();
           onClose();
+          window.location.reload();
       } else {
         alert('Ошибка при входе:', response.data.detail.msg);
       }

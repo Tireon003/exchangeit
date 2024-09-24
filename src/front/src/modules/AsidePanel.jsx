@@ -64,6 +64,33 @@ const AsidePanel = () => {
         setIsLoggedIn(false);
     };
 
+    const getUserWishList = async () => {
+        try {
+            const token = Cookies.get('access_token');
+            if (!token) {
+                alert('Your token is missing. Check if you are logged in or try again');
+                return null;
+            }
+
+            const response = await axios.get('http://localhost:8008/api/users/me/wishlist', {
+                withCredentials: true,
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            });
+
+            if (response.status === 200) {
+                console.log(response.data); // Для проверки, можно оставить
+                return response.data;
+            } else {
+                throw new Error('Something went wrong while getting wishlist. Try again later.');
+            }
+        } catch (error) {
+            alert(error.message || 'An unknown error occurred');
+            return null;
+        }
+    };
+
     useEffect(() => {
         checkUserLoggedIn();
     }, [isLoggedIn]);
@@ -81,7 +108,10 @@ const AsidePanel = () => {
                   <div className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer">
                     My ads
                   </div>
-                  <div className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer">
+                  <div
+                    className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer"
+                    onClick={getUserWishList}
+                  >
                     Wish list
                   </div>
                   <div className="p-2 mb-2 rounded-md hover:bg-gray-200 cursor-pointer">

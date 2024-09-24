@@ -14,5 +14,14 @@ class Database:
         async with self.asession() as session:
             yield session
 
+    async def get_async_session(self):
+        try:
+            async with self.create_async_session() as session:
+                yield session
+        except Exception as e:
+            print(e)
+            await session.rollback()
+            raise e
+
 
 database = Database()

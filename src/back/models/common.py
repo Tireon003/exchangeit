@@ -31,7 +31,7 @@ class UserTable(Base):
     last_activity: Mapped[ReusableTypes.dt_default_now]
     is_active: Mapped[bool] = mapped_column(default=True)
 
-    favorite_ads: Mapped["AdTable"] = relationship(
+    favorite_ads: Mapped[list["AdTable"]] = relationship(
         back_populates="in_user_favorites",
         secondary="favorites"
     )

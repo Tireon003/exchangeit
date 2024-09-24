@@ -1,13 +1,17 @@
 import uvicorn
 from contextlib import asynccontextmanager
 from redis import asyncio as aioredis
-from fastapi import FastAPI, Request, HTTPException, status
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
-from routes import auth_router, users_router, ads_router
-from exceptions import ExpiredTokenException, InvalidTokenException
+from auth.router import router as auth_router
+from user.router import router as users_router
+from ad.router import router as ads_router
+from auth.exceptions import ExpiredTokenException, InvalidTokenException
+from config import settings
 
 allowed_origins = [
     "http://localhost:5173",
@@ -19,7 +23,7 @@ allowed_origins = [
 async def lifespan(app: FastAPI):
     # --------Startup-------
     redis = await aioredis.from_url(
-        url="redis://redis:6379",
+        url=settings.redis_url,
         encoding="utf-8",
     )
     FastAPICache.init(
@@ -57,18 +61,18 @@ app.include_router(ads_router)
 
 @app.exception_handler(ExpiredTokenException)
 async def handle_expired_token_exception(request: Request, exc: ExpiredTokenException):
-    raise HTTPException(
+    return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Access token expired",
+        content="Access token expired",
         headers={"WWW-Authenticate": "Bearer"}
     )
 
 
 @app.exception_handler(InvalidTokenException)
 async def handle_expired_token_exception(request: Request, exc: InvalidTokenException):
-    raise HTTPException(
+    return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid access token",
+        content="Invalid access token",
         headers={"WWW-Authenticate": "Bearer"}
     )
 

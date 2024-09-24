@@ -1,10 +1,10 @@
 from pydantic import BaseModel, Field, PositiveInt, PlainSerializer
 from datetime import datetime as dt
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 
-from .ad import AdFromDB
-from .contacts import ContactCardFromDB
+from ad.schemas import AdFromDB
+from contact.schemas import ContactCardFromDB
 
 
 class User(BaseModel):

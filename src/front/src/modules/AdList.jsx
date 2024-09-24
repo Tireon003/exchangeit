@@ -10,7 +10,7 @@ const AdList = ({ads}) => {
         <div className="w-full mx-auto">
             <h1 className="text-2xl font-bold mb-4">Ads</h1>
             <div className="">
-                {ads.map((ad, index) => (
+                {ads.map((ad, index) => ( // todo сделать отрисовку условной относительно id авторизованного юзера
                 <AdCard key={index} adData={ad} />
                 ))}
             </div>

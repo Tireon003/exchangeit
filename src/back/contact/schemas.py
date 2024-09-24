@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, PositiveInt
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from schemas import UserFromDB
+    from user.schemas import UserFromDB
 
 
 class ContactCard(BaseModel):

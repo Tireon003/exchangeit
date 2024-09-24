@@ -1,22 +1,64 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ContactModal from './ContactModal';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+
 
 const AdCard = ({ adData }) => {
   const { id, by_user, category, item_give, item_get, description, location, created_at } = adData;
-
   const [isExpanded, setIsExpanded] = useState(false);
-
   const truncatedDescription = isExpanded ? description : `${description.slice(0, 100)}...`;
-
   const formattedTitle = `${item_give} to ${item_get}`;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAdData, setCurrentAdData] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+      const token = Cookies.get('access_token');
+      if (token) {
+          const payload = jwtDecode(token);
+          setCurrentUser(payload.usr)
+      } else {
+          setCurrentUser(null);
+      }
+  }, []);
 
   const handleContactClick = () => {
-    // Открываем модальное окно с текущими данными ада
     setCurrentAdData(adData);
     setIsModalOpen(!isModalOpen);
+  };
+
+  const handleAddToWishlistClick = async () => {
+      if (!currentUser) {
+          alert('You need to log in to add ads to wishlist');
+          return;
+      }
+      const token = Cookies.get('access_token');
+      if (token) {
+          const response = await axios.post(
+              `http://localhost:8008/api/users/me/wishlist/add?ad_id=${id}`,
+              null,
+              {
+                  withCredentials: true,
+                  headers: {
+                      'Authorization': 'Bearer ' + token,
+                      'Content-Type': 'application/json'
+                  }
+              }
+          ).catch(error => {
+              if (error.response.status === 409) {
+                  alert("Ad already in wishlist");
+              } else if (error.response.status === 401) {
+                  alert('Authentication error. Please log in and try again.')
+              }
+          });
+          if (response.status === 200) {
+              alert('Ad has been added to your wishlist!');
+          }
+      } else {
+          alert('Authentication error. Please log in and try again.')
+      }
   };
 
   return (
@@ -46,7 +88,10 @@ const AdCard = ({ adData }) => {
           >
             Contact
           </button>
-          <button className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition duration-300">
+          <button
+            className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition duration-300"
+            onClick={handleAddToWishlistClick}
+          >
             Add to wishlist
           </button>
         </div>

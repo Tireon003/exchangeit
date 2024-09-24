@@ -2,8 +2,8 @@ import jwt
 import datetime as dt
 
 from config import settings
-from exceptions import ExpiredTokenException, InvalidTokenException
-from schemas import TokenType
+from auth.exceptions import ExpiredTokenException, InvalidTokenException
+from auth.schemas import TokenType
 
 
 class JwtService:
