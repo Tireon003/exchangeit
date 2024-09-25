@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
-from sqlalchemy import ForeignKey, String, text
+from sqlalchemy import ForeignKey, String, text, BigInteger
 from datetime import datetime as dt
 from typing import Annotated
 from pydantic import PositiveInt
@@ -107,7 +107,7 @@ class ContactTable(Base):
     by_user: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     email: Mapped[str | None] = mapped_column(default=None)
     telegram: Mapped[ReusableTypes.str20 | None] = mapped_column(default=None)
-    phone_number: Mapped[PositiveInt | None] = mapped_column(default=None)
+    phone_number: Mapped[int | None] = mapped_column(BigInteger, default=None)
 
     user: Mapped["UserTable"] = relationship(
         back_populates="contacts",
