@@ -10,11 +10,18 @@ from .schemas import UserCreate
 
 from contact.schemas import ContactCardCreate
 
-
+# todo add redis cache
 class UserRepository:
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+    def __repr__(self) -> str:
+        """
+        Overriding __repr__ for fastapi-cache
+        :return:
+        """
+        return self.__class__.__name__
 
     async def get_user(self,
                        user_id: int,
