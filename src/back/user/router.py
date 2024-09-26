@@ -34,12 +34,7 @@ async def get_user_data_full(
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
         user_repository: Annotated[UserRepository, Depends(get_user_repository(db.get_async_session))]
 ):
-    user_data_full = await user_repository.get_user(
-        user_id=token_payload.usr,
-        with_ads=True,
-        with_contacts=True,
-        with_favorites=True
-    )
+    user_data_full = await user_repository.get_user(user_id=token_payload.usr)
     if not user_data_full:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
