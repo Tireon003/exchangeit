@@ -26,7 +26,10 @@ router = APIRouter(
 )
 
 
-@router.get("/me", response_model=UserDBRelsAdsFavContacts, status_code=status.HTTP_200_OK)
+@router.get(path="/me",
+            response_model=UserDBRelsAdsFavContacts,
+            status_code=status.HTTP_200_OK,
+            description="Get user info")
 async def get_user_data_full(
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
         user_repository: Annotated[UserRepository, Depends(get_user_repository(db.get_async_session))]
@@ -67,7 +70,10 @@ async def create_ad(
     )
 
 
-@router.get("/me/wishlist", response_model=list[AdFromDB] | None, status_code=status.HTTP_200_OK)
+@router.get(path="/me/wishlist",
+            response_model=list[AdFromDB] | None,
+            status_code=status.HTTP_200_OK,
+            description="Get user wishlist")
 async def get_user_wishlist(
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
         user_repository: Annotated[UserRepository, Depends(get_user_repository(db.get_async_session))]
@@ -82,7 +88,8 @@ async def get_user_wishlist(
         )
 
 
-@router.post("/me/wishlist/add")
+@router.post(path="/me/wishlist",
+             description="Add ad to user wishlist")
 async def add_ad_to_user_wishlist(
         ad_id: Annotated[int, Query()],
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
@@ -113,7 +120,8 @@ async def add_ad_to_user_wishlist(
         )
 
 
-@router.delete("/me/wishlist/remove")
+@router.delete(path="/me/wishlist",
+               description="Remove ad from user wishlist")
 async def remove_ad_from_wishlist(
         ad_id: Annotated[int, Query()],
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
