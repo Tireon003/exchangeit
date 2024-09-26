@@ -5,7 +5,7 @@ from fastapi_cache.decorator import cache
 
 from models import AdTable, ContactTable
 
-# todo add redis cache
+
 class AdsRepository:
 
     def __init__(self, session: AsyncSession) -> None:

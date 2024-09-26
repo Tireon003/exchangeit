@@ -10,7 +10,7 @@ from .schemas import UserCreate
 
 from contact.schemas import ContactCardCreate
 
-# todo add redis cache
+
 class UserRepository:
 
     def __init__(self, session: AsyncSession) -> None:
@@ -151,3 +151,17 @@ class UserRepository:
             return False
         else:
             return True
+
+    async def get_ads(self, user_id: int) -> list[AdTable] | None:
+        """
+        Get user's ads list.
+        :param user_id: user id in database
+        :return: list of user ads (sqlalchemy table objects)
+        """
+        stmt = (
+            select(AdTable)
+            .filter_by(by_user=user_id)
+        )
+        result = await self.session.scalars(stmt)
+        ads = [ad for ad in result.all()]
+        return ads
