@@ -45,7 +45,28 @@ async def get_user_data_full(
         return user_dto
 
 
-@router.post("/me/ads/new")
+@router.get(path="/me/ads",
+            response_model=list[AdFromDB] | None,
+            status_code=status.HTTP_200_OK,
+            description="Get user ads")
+async def get_user_ads(
+        token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
+        user_repository: Annotated[UserRepository, Depends(get_user_repository(db.get_async_session))]
+) -> list[AdFromDB] | None:
+    user_exists = await user_repository.get_user(user_id=token_payload.usr)
+    if not user_exists:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User {token_payload.usr} not found",
+        )
+    else:
+        user_ads = await user_repository.get_ads(user_id=token_payload.usr)
+        user_ads_dto = [AdFromDB.model_validate(ad) for ad in user_ads]
+        return user_ads_dto
+
+
+@router.post(path="/me/ads",
+             description="Create new ad for user")
 async def create_ad(
         ad_data: Annotated[AdCreate, Body()],
         token_payload: Annotated[AccessTokenPayload, Depends(validate_token)],
